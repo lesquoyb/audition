@@ -9,7 +9,7 @@ class Parcours:
         self.transfo = []
 
     def addTransfo(self, type, values):
-        self.transfo += [(type: values] #values étant un couple
+        self.transfo += [(type, values)] #values étant un couple
 
     def compter(self):
         ns, ni, no = 0,0,0
