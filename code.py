@@ -93,7 +93,7 @@ def parseModeleDiscret():
         for j in range (len(data)):
             proba_sub[(phon, phons[j])] = float(data[j])
 
-    line = f.readline()[-1] #BALEK - Proba insertions...
+    f.readline()[-1] #BALEK - Proba insertions...
 
     line = f.readline()[:-1]
     data = line.split(";")[1:]
@@ -162,20 +162,26 @@ def levenshtein_btw_files(lex, test):
     t = parseModeleDiscret()
     l =""
     f = open("yolooooo", "w")
-
+    parcours = None
+    (psub, pins, pomi, proba_sub, proba_ins) = t
     for k,v in test:
         mini = 99999
         nom = k
         lit = ""
         for kl,vl in lex.items():
             for it in vl:
-                d, corresp = Levenshtein(v ,it, t)
+                d, parcours = Levenshtein(v ,it, t)
                 if d < mini:
                     mini = d
                     nom = kl
                     lit = it
-                l += k + " " + str(v) + " => " + kl + " " + str(it) + ("Erreur" if d > 0 else "Correct") + str(d) + " <=> " + str(corresp) + "\n"
+                l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
                 f.write(l)
+
+        ns, ni, no, n, ins = parcours.compter()
+        psub = (ns + 1) / (ns + ni + no + 3)
+        pins, pomi, proba_sub, proba_ins
+        t = (psub, pins, pomi, proba_sub, proba_ins)
     f.close()
 
 
