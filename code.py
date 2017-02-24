@@ -4,12 +4,13 @@ class Parcours:
     SUB = 0
     INS = 1
     OMI = 2
+    NOP = 3
 
     def __init__(self):
         self.transfo = []
 
     def addTransfo(self, type, values):
-        self.transfo += [(type, values)] #values étant un couple
+        self.transfo.insert(0, (type, values)) #values étant un couple
 
     def compter(self):
         ns, ni, no = 0,0,0
@@ -37,13 +38,11 @@ class Parcours:
         return ns, ni, no, n, ins
 
 
-
-
-
     def print(self):
         r = ""
-        for transfo in self.transfo.reverse():
-            r += "yolo" #TODO
+        for typ, transfo in self.transfo:
+            bef, aft = transfo
+            r += " (" + bef + "=>" + aft + ")" #TODO
         return r
 
 
@@ -123,33 +122,43 @@ def Levenshtein(st1, st2, t ):
             ins_c = -log(pins) - log(proba_ins[st1[i]])
             sub_c = 0 if st1[i] == st2[j] else -log(psub) - log(proba_sub[(st1[i], st2[j])])
             d[i][j] = min(d[i-1][j] + del_c, d[i][j-1] + ins_c, d[i-1][j-1] + sub_c)
-    corresp = ""
+    parcours = Parcours()
     i,j = len(st1)-1, len(st2)-1
-    while (i,j) != (0,0):
-        c = ""
+    while i != 0 and j != 0:
+        typ = -1
+        vals = ("","")
+
+
         val = d[i][j]
         if i>0 and d[i-1][j] < val: # INS
             ti = i -1
             tj = j
             val = d[ti][tj]
-            c = "=>" + st2[j]
+
+            typ = 0
+            vals = ("", st1[i])
         if j>0:
             if d[i][j-1] < val: # OMI
                 ti = i
                 tj = j -1
                 val = d[ti][tj]
-                c = st1[i] + "=>"
+
+                typ = 1
+                vals = (st2[j], "")
             if i>0:
                 ti = i -1
                 tj = j -1
                 if d[i-1][j-1] < val: # SUB
-                    c = st1[i] + "=>" + st2[j]
+                    typ = 2
+                    vals = (st1[i], st2[j])
 
-                if d[i-1][j-1] == val : # SAME
-                    c = st1[i]
-        corresp += c
+        if typ == -1 : # SAME
+            typ = 3
+            vals = (st1[i], st2[j])
+
+        parcours.addTransfo(typ, vals)
         i,j = ti,tj
-    return d[-1][-1], corresp
+    return d[-1][-1], parcours
 
 
 def levenshtein_btw_files(lex, test):
@@ -174,8 +183,9 @@ def levenshtein_btw_files(lex, test):
                     mini = d
                     nom = kl
                     lit = it
-                l += k + " " + str(v) + " => " + kl + " " + str(it) + ("Erreur" if d > 0 else "Correct") + str(d) + " <=> " + str(corresp) + "\n"
-                f.write(l)
+                l += k + " " + str(v) + " => " + kl + " " + str(it) + ("Erreur" if d > 0 else "Correct") + str(d) + " <=> " + corresp.print() + "\n"
+                #f.write(l)
+                print(l)
     f.close()
 
 
