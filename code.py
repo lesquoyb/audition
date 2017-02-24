@@ -152,11 +152,24 @@ def Levenshtein(st1, st2, t ):
 
         parcours.addTransfo(typ, vals)
         i,j = ti,tj
+
+        """
     for l in d:
         for i in l:
             s = " %d " % i if l == d[0] or i == l[0] else "%0.1f" % i
             print(s, end=" ")
         print()
+        """
+    l = [ it[1][0] for it in parcours.transfo if it[1][0] != "" ]
+    r = [ it[1][1] for it in parcours.transfo if it[1][1] != "" ]
+
+    if l!= st1:
+        print( st1,st2, parcours.print() + " : " + str(l) + " différent de " + str(st1))
+    elif r!= st2:
+        print(st1,st2, parcours.print() + " : " +str(r) + " différent de " + str(st2))
+    else:
+        print("tout va bien")
+
     return d[-1][-1], parcours
 
 
@@ -185,7 +198,7 @@ def levenshtein_btw_files(lex, test):
                     lit = it
 
                 l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
-                print(k + " " + kl + " " +parcours.print())
+                #print(k + " " + kl + " " +parcours.print())
                 #print(l)
 
         ns, ni, no, n, ins = parcours.compter()
