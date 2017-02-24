@@ -118,7 +118,7 @@ def Levenshtein(st1, st2, t ):
             d[i][j] = min(d[i-1][j] + del_c, d[i][j-1] + ins_c, d[i-1][j-1] + sub_c)
     parcours = Parcours()
     i,j = len(st1)-1, len(st2)-1
-    while i != 0 or j != 0:
+    while i >= 0 or j >= 0:
         typ = -1
         vals = ("","")
 
@@ -149,6 +149,8 @@ def Levenshtein(st1, st2, t ):
         if typ == -1 : # SAME
             typ = 3
             vals = (st1[i], st2[j])
+            ti = i -1
+            tj = j -1
 
         parcours.addTransfo(typ, vals)
         i,j = ti,tj
