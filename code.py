@@ -14,7 +14,7 @@ class Parcours:
     def compter(self):
         ns, ni, no = 0,0,0
         for transfo in self.transfo:
-            if transfo[0] == SUB:
+            if transfo[0] == self.SUB:
                 pass
 
 
