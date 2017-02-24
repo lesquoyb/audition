@@ -1,3 +1,23 @@
+
+class Parcours:
+
+    SUB = 0
+    INS = 1
+    OMI = 2
+
+    def __init__(self):
+        self.transfo = []
+
+    def addTransfo(self, type, values):
+        self.transfo += [{type: values}] #values étant un couple
+
+    def print(self):
+        r = ""
+        for transfo in self.transfo.reverse():
+            r += "yolo" #TODO
+        return r
+
+
 def parseYolo(fileName):
     f = open(fileName)
     assoc = []
