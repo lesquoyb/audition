@@ -13,9 +13,28 @@ class Parcours:
 
     def compter(self):
         ns, ni, no = 0,0,0
-        for transfo in self.transfo:
-            if transfo[0] == self.SUB:
-                pass
+        n = {}
+        ins = {}
+        for op, val in self.transfo:
+            if op == self.SUB:
+                ns += 1
+                if val in n.keys():
+                    n[val] += 1
+                    n[(val[1],val[0])] += 1
+                else:
+                    n[val] = 1
+                    n[(val[1],val[0])] = 1
+            elif op == self.INS:
+                ni += 1
+                if val in ins:
+                    ins[val] += 1
+                else:
+                    ins[val] = 1
+
+            elif op == self.OMI:
+                no += 1
+
+        return ns, ni, no, n, ins
 
 
 
