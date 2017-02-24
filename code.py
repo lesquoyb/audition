@@ -121,8 +121,6 @@ def Levenshtein(st1, st2, t ):
     while i != 0 or j != 0:
         typ = -1
         vals = ("","")
-
-
         val = d[i][j]
         if i>0 and d[i-1][j] < val: # INS
             ti = i -1
@@ -130,7 +128,7 @@ def Levenshtein(st1, st2, t ):
             val = d[ti][tj]
 
             typ = 0
-            vals = ("", st1[i])
+            vals = (st1[i], "")
         if j>0:
             if d[i][j-1] < val: # OMI
                 ti = i
@@ -138,7 +136,7 @@ def Levenshtein(st1, st2, t ):
                 val = d[ti][tj]
 
                 typ = 1
-                vals = (st2[j], "")
+                vals = ( "", st2[j])
             if i>0:
                 ti = i -1
                 tj = j -1
@@ -152,6 +150,11 @@ def Levenshtein(st1, st2, t ):
 
         parcours.addTransfo(typ, vals)
         i,j = ti,tj
+    for l in d:
+        for i in l:
+            s = " %d " % i if l == d[0] or i == l[0] else "%0.1f" % i
+            print(s, end=" ")
+        print()
     return d[-1][-1], parcours
 
 
