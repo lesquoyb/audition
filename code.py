@@ -4,12 +4,13 @@ class Parcours:
     SUB = 0
     INS = 1
     OMI = 2
+    NOP = 3
 
     def __init__(self):
         self.transfo = []
 
     def addTransfo(self, type, values):
-        self.transfo += [(type, values)] #values étant un couple
+        self.transfo.insert(0, (type, values)) #values étant un couple
 
     def compter(self):
         ns, ni, no = 0,0,0
@@ -18,32 +19,24 @@ class Parcours:
         for op, val in self.transfo:
             if op == self.SUB:
                 ns += 1
-                if val in n.keys():
-                    n[val] += 1
-                    n[(val[1],val[0])] += 1
-                else:
-                    n[val] = 1
-                    n[(val[1],val[0])] = 1
+                n[val] = n[val] + 1 if val in n.keys() else 1
+                n[(val[1],val[0])] = n[val]
             elif op == self.INS:
                 ni += 1
-                if val in ins:
-                    ins[val] += 1
-                else:
-                    ins[val] = 1
-
+                ins[val] = ins[val] + 1 if val in ins.keys() else 1
+                ins[val[1], val[0]] = ins[val]
             elif op == self.OMI:
                 no += 1
 
         return ns, ni, no, n, ins
 
 
-
-
-
     def print(self):
         r = ""
-        for transfo in self.transfo.reverse():
-            r += "yolo" #TODO
+        for typ, transfo in self.transfo:
+            #print(typ, transfo)
+            bef, aft = transfo
+            r += " (" + bef + "=>" + aft + ")" #TODO
         return r
 
 
@@ -123,33 +116,43 @@ def Levenshtein(st1, st2, t ):
             ins_c = -log(pins) - log(proba_ins[st1[i]])
             sub_c = 0 if st1[i] == st2[j] else -log(psub) - log(proba_sub[(st1[i], st2[j])])
             d[i][j] = min(d[i-1][j] + del_c, d[i][j-1] + ins_c, d[i-1][j-1] + sub_c)
-    corresp = ""
+    parcours = Parcours()
     i,j = len(st1)-1, len(st2)-1
-    while (i,j) != (0,0):
-        c = ""
+    while i != 0 or j != 0:
+        typ = -1
+        vals = ("","")
+
+
         val = d[i][j]
         if i>0 and d[i-1][j] < val: # INS
             ti = i -1
             tj = j
             val = d[ti][tj]
-            c = "=>" + st2[j]
+
+            typ = 0
+            vals = ("", st1[i])
         if j>0:
             if d[i][j-1] < val: # OMI
                 ti = i
                 tj = j -1
                 val = d[ti][tj]
-                c = st1[i] + "=>"
+
+                typ = 1
+                vals = (st2[j], "")
             if i>0:
                 ti = i -1
                 tj = j -1
                 if d[i-1][j-1] < val: # SUB
-                    c = st1[i] + "=>" + st2[j]
+                    typ = 2
+                    vals = (st1[i], st2[j])
 
-                if d[i-1][j-1] == val : # SAME
-                    c = st1[i]
-        corresp += c
+        if typ == -1 : # SAME
+            typ = 3
+            vals = (st1[i], st2[j])
+
+        parcours.addTransfo(typ, vals)
         i,j = ti,tj
-    return d[-1][-1], corresp
+    return d[-1][-1], parcours
 
 
 def levenshtein_btw_files(lex, test):
@@ -175,13 +178,16 @@ def levenshtein_btw_files(lex, test):
                     mini = d
                     nom = kl
                     lit = it
+
                 l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
-                f.write(l)
+                print(k + " " + kl + " " +parcours.print())
+                #print(l)
 
         ns, ni, no, n, ins = parcours.compter()
         psub = (ns + 1) / (ns + ni + no + 3)
         pins, pomi, proba_sub, proba_ins
         t = (psub, pins, pomi, proba_sub, proba_ins)
+    #f.write(l)
     f.close()
 
 
