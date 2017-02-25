@@ -103,55 +103,69 @@ def parsePhonemes():
 from math import log
 def Levenshtein(st1, st2, t ):
     (psub, pins, pomi, proba_sub, proba_ins) = t
-    d =[[0]*len(st2) for i in range(len(st1))]
+    lst1 = len(st1)
+    lst2 = len(st2)
 
-    for i in range(len(st1)):
+    d =[[0]*(lst2+1) for i in range(lst1+1)]
+
+    for i in range(lst1+1):
         d[i][0] = i
-    for i in range(len(st2)):
+    for i in range(lst2+1):
         d[0][i] = i
 
-    for i in range(1,len(st1)):
-        for j in range(1,len(st2)):
+    for i in range(0,len(st1)):
+        for j in range(0,len(st2)):
+            l1 = st1[i]
+            l2 = st2[j]
+
             del_c = - log(pomi)
-            ins_c = -log(pins) - log(proba_ins[st1[i]])
-            sub_c = 0 if st1[i] == st2[j] else -log(psub) - log(proba_sub[(st1[i], st2[j])])
-            d[i][j] = min(d[i-1][j] + del_c, d[i][j-1] + ins_c, d[i-1][j-1] + sub_c)
+            ins_c = - log(pins) - log(proba_ins[st1[i-1]])
+            sub_c = 0 if l1 == l2 else -log(psub) - log(proba_sub[(l1, l2)])
+            d[i+1][j+1] = min(d[i][j+1] + del_c, d[i+1][j] + ins_c, d[i][j] + sub_c)
+
+
     parcours = Parcours()
-    i,j = len(st1)-1, len(st2)-1
-    while i >= 0 or j >= 0:
+    i,j = len(st1), len(st2)
+
+    while i > 0 or j > 0:
+        di = i
+        dj = j
+
         typ = -1
         vals = ("","")
+
+        l1 = st1[i-1]
+        l2 = st2[j-1]
+
         val = d[i][j]
-        if i>0 and d[i-1][j] < val: # INS
-            ti = i -1
-            tj = j
-            val = d[ti][tj]
 
-            typ = 0
-            vals = (st1[i], "")
-        if j>0:
-            if d[i][j-1] < val: # OMI
-                ti = i
-                tj = j -1
-                val = d[ti][tj]
+        if i == 0 :
+            vals = ("", l2)
+            dj = j-1
+        elif j == 0 :
+            vals = (l1, "")
+            di = i-1
+        else :
+            if d[i-1][j] <= val : #INS
+                vals = (l1, "")
+                di = i-1
+                dj = j
+                val = d[i-1][j]
 
-                typ = 1
-                vals = ( "", st2[j])
-            if i>0:
-                ti = i -1
-                tj = j -1
-                if d[i-1][j-1] < val: # SUB
-                    typ = 2
-                    vals = (st1[i], st2[j])
+            if d[i][j-1] <= val : #OMI
+                vals = ("", l2)
+                di = i
+                dj = j-1
+                val = d[i][j-1]
 
-        if typ == -1 : # SAME
-            typ = 3
-            vals = (st1[i], st2[j])
-            ti = i -1
-            tj = j -1
+            if d[i-1][j-1] <= val : #SUB
+                vals = (l1, l2)
+                di = i-1
+                dj = j-1
+
+        i, j = di, dj
 
         parcours.addTransfo(typ, vals)
-        i,j = ti,tj
 
         """
     for l in d:
@@ -163,12 +177,17 @@ def Levenshtein(st1, st2, t ):
     l = [ it[1][0] for it in parcours.transfo if it[1][0] != "" ]
     r = [ it[1][1] for it in parcours.transfo if it[1][1] != "" ]
 
-    if l!= st1:
+    good = True
+    if l != st1:
         print( st1,st2, parcours.print() + " : " + str(l) + " différent de " + str(st1))
-    elif r!= st2:
+        good = False
+    if r != st2:
         print(st1,st2, parcours.print() + " : " +str(r) + " différent de " + str(st2))
-    else:
+        good = False
+    if good :
         print("tout va bien")
+
+    print()
 
     return d[-1][-1], parcours
 
@@ -198,7 +217,7 @@ def levenshtein_btw_files(lex, test):
                     lit = it
 
                 l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
-                #print(k + " " + kl + " " +parcours.print())
+                print(k + " " + kl + " " +parcours.print())
                 #print(l)
 
         ns, ni, no, n, ins = parcours.compter()
