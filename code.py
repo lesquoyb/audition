@@ -119,12 +119,8 @@ def Levenshtein(st1, st2, t ):
             l2 = st2[j]
 
             del_c = - log(pomi)
-
             ins_c = - log(pins) - ( log(proba_ins[st1[i-1]]) if i > 0 else 0)
-
-            sub_c = 0 if l1 == l2 else -log(psub) - log(proba_sub[(l1, l2)])
-
-
+            sub_c = 0 if l1 == l2 else -log(psub) - ( log(proba_sub[(l1, l2)]) if l1 != "" and l2 != "" else 0)
             d[i+1][j+1] = min(d[i][j+1] + del_c, d[i+1][j] + ins_c, d[i][j] + sub_c)
 
 
@@ -185,7 +181,7 @@ def Levenshtein(st1, st2, t ):
             s = " %d " % i if l == d[0] or i == l[0] else "%0.1f" % i
             print(s, end=" ")
         print()
-        """
+
     l = [ it[1][0] for it in parcours.transfo if it[1][0] != "" ]
     r = [ it[1][1] for it in parcours.transfo if it[1][1] != "" ]
 
@@ -200,7 +196,7 @@ def Levenshtein(st1, st2, t ):
         pass
         #print("tout va bien")
 
-
+    """
 
     return d[-1][-1], parcours
 
@@ -217,32 +213,35 @@ def levenshtein_btw_files(lex, test):
     f = open("yolooooo", "w")
     parcours = None
     (psub, pins, pomi, proba_sub, proba_ins) = t
+    #print ([v for k,v in test])
     for k,v in test:
         mini = 99999
         nom = k
         lit = ""
-        try:
-            for kl,vl in lex.items():
-                for it in vl:
+
+        for kl,vl in lex.items():
+            for it in vl:
+                try:
                     d, parcours = Levenshtein(v ,it, t)
-                    if d < mini:
-                        mini = d
-                        nom = kl
-                        lit = it
+                except:
+                    print(v, it)
+                if d < mini:
+                    mini = d
+                    nom = kl
+                    lit = it
 
-                    l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
-                    #print(k + " " + kl + " " +parcours.print())
-                    #print(l)
+                l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
+                #print(k + " " + kl + " " +parcours.print())
+                #print(l)
 
-            ns, ni, no, n, ins = parcours.compter()
-            psub = (ns + 1) / (ns + ni + no + 3)
-            pins, pomi, proba_sub, proba_ins
-            t = (psub, pins, pomi, proba_sub, proba_ins)
-        except:
-            print(v, vl)
+        ns, ni, no, n, ins = parcours.compter()
+        psub = (ns + 1) / (ns + ni + no + 3)
+        pins, pomi, proba_sub, proba_ins
+        t = (psub, pins, pomi, proba_sub, proba_ins)
 
 
-    #f.write(l)
+
+    f.write(l)
     f.close()
 
 
