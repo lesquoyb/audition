@@ -168,7 +168,7 @@ def Levenshtein(st1, st2, t ):
     elif r!= st2:
         print(st1,st2, parcours.print() + " : " +str(r) + " différent de " + str(st2))
     else:
-        print("tout va bien")
+        pass #print("tout va bien")
 
     return d[-1][-1], parcours
 
