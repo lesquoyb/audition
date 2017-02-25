@@ -139,29 +139,37 @@ def Levenshtein(st1, st2, t ):
 
         val = d[i][j]
 
-        if i == 0 :
+        if i == 0 : #INS
             vals = ("", l2)
             dj = j-1
-        elif j == 0 :
+            typ = 1
+        elif j == 0 : #OMI
             vals = (l1, "")
             di = i-1
+            typ = 2
         else :
             if d[i-1][j] <= val : #INS
                 vals = (l1, "")
                 di = i-1
                 dj = j
                 val = d[i-1][j]
+                typ = 1
 
             if d[i][j-1] <= val : #OMI
                 vals = ("", l2)
                 di = i
                 dj = j-1
                 val = d[i][j-1]
+                typ = 2
 
             if d[i-1][j-1] <= val : #SUB
                 vals = (l1, l2)
                 di = i-1
                 dj = j-1
+                if d[i-1][j-1] == d[i][j]: #SUB NOP
+                    typ = 3
+                else: #SUB
+                    typ = 0
 
         i, j = di, dj
 
