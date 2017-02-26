@@ -27,8 +27,9 @@ class Parcours:
                 ns += 1
             elif op == self.INS:
                 ni += 1
-                ins[val] = ins[val] + 1 if val in ins.keys() else 1
-                ins[val[1], val[0]] = ins[val]
+                v = val [0]
+                ins[v] = ins[v] + 1 if v in ins.keys() else 1
+                #ins[val[1], val[0]] = ins[val]
             elif op == self.OMI:
                 no += 1
 
@@ -190,7 +191,7 @@ def backtrack(st1, st2, d):
                 di = i-1
                 dj = j-1
                 if d[i-1][j-1] == d[i][j]: #SUB NOP
-                    typ = 3
+                    typ = 0
                 else: #SUB
                     typ = 0
 

@@ -24,11 +24,12 @@ def learn(hmm, fileName="data/train-01000items.train") :
         for e in compte[4].keys():
             ins[e] = ins[e] + compte[4][e] if e in ins.keys() else compte[4][e]
 
-    psub = max((ns + 1) / (ns + ni + no + 3), INC_MIN)
 
+    psub = max((ns + 1) / (ns + ni + no + 3), INC_MIN)
     for c in proba_sub.keys():
         proba_sub[c] = max(float(n[c]) / sum( [ n[k] + 1 for k in n.keys() if c[0] == k[0] ] ) if c in n.keys() else INC_MIN, INC_MIN)
-    for k in proba_ins.keys():
-        proba_ins[k] = max(float(ins[k]) / sum([ins[key]+1 for key in ins.keys()]) if k in ins.keys() else INC_MIN, INC_MIN)
 
+    sm = sum( [ins[key]+1 for key in ins.keys()] )
+    for k in proba_ins.keys():
+        proba_ins[k] = max(float(ins[k]) / sm, INC_MIN) if k in ins.keys() else INC_MIN
     return psub, pins, pomi, proba_sub, proba_ins
