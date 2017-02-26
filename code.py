@@ -108,6 +108,36 @@ def parseModeleDiscret():
 
     return (float(psub), float(pins), float(pomi), proba_sub, proba_ins)
 
+def writeModeleDiscret(modele, iter):
+    psub, pins, pomi, proba_sub, proba_ins = modele
+
+    f = open("model_iter" + str(iter) + ".dat", "w")
+
+    f.write("Psub;Pins;Pomi\n")
+    f.write( "%.3f" % psub + ";" + "%.3f" % pins + ";" + "%.3f" % pomi + "\n")
+
+    f.write("#Une ligne par symbole de reference; une colonne par symbole de test\n")
+
+    f.write("\t")
+    phonemes = parsePhonemes()
+    for phon in phonemes:
+        f.write(";" + phon)
+    f.write("\n")
+
+    for phon in phonemes:
+        f.write(phon)
+        for phon2 in phonemes:
+            f.write(";" + "%.3f" % proba_sub[(phon, phon2)])
+        f.write("\n")
+
+    f.write("Proba insertions...\n")
+
+    f.write("<ins>")
+    for phon in phonemes:
+        f.write(";" + "%.3f" % proba_ins[(phon)])
+
+    f.close()
+
 def parsePhonemes():
     return open("data/liste_symboles.dat").read().split("\n")[:-1]
 
@@ -268,7 +298,12 @@ def learn() :
 if __name__ == "__main__":
     learn()
 
+    t = parseModeleDiscret()
+    writeModeleDiscret(t, 1)
+
+    '''
     lex = parseLex("data/lexicon-2syll-0100words.lex")
     phonemes = parsePhonemes()
     test = parseYolo("data/test-2syll-0100words.test")
     levenshtein_btw_files(lex, test)
+    '''
