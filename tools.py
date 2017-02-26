@@ -107,10 +107,10 @@ def parseModeleDiscret(mod_file="data/modele_discret_initialise.dat"):
 
     return (float(psub), float(pins), float(pomi), proba_sub, proba_ins)
 
-def writeModeleDiscret(modele, iter):
+def writeModeleDiscret(modele, fileName):
     psub, pins, pomi, proba_sub, proba_ins = modele
 
-    f = open("model_iter" + str(iter) + ".dat", "w")
+    f = open(fileName, "w")
 
     f.write("Psub;Pins;Pomi\n")
     f.write( "%.3f" % psub + ";" + "%.3f" % pins + ";" + "%.3f" % pomi + "\n")
