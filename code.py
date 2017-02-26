@@ -236,7 +236,9 @@ def levenshtein_btw_files(lex, test):
 
         ns, ni, no, n, ins = parcours.compter()
         psub = (ns + 1) / (ns + ni + no + 3)
-        pins, pomi, proba_sub, proba_ins
+        for k,v in test:
+            
+        proba_sub, proba_ins
         t = (psub, pins, pomi, proba_sub, proba_ins)
 
 
