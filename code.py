@@ -65,6 +65,18 @@ def parseLex(fileName):
                 assoc[key] = [val]
     return assoc
 
+def parseTrain(fileName):
+    f = open(fileName)
+    assoc = []
+    for line in f.readlines():
+        line = line[:-1]
+        dt = line.split("\t")
+        mot = dt[0]
+        ref = (dt[1])[1:-1].split(" ")
+        test = (dt[2])[1:-1].split(" ")
+        assoc += [(mot, ref, test)]
+    return assoc
+
 def parseModeleDiscret():
     f = open("data/modele_discret_initialise.dat")
 
@@ -101,7 +113,7 @@ def parsePhonemes():
 
 
 from math import log
-def Levenshtein(st1, st2, t ):
+def Levenshtein(st1, st2, t):
     (psub, pins, pomi, proba_sub, proba_ins) = t
     lst1 = len(st1)
     lst2 = len(st2)
@@ -119,8 +131,8 @@ def Levenshtein(st1, st2, t ):
             l2 = st2[j]
 
             del_c = - log(pomi)
-            ins_c = - log(pins) - ( log(proba_ins[st1[i-1]]) if i > 0 else 0)
-            sub_c = 0 if l1 == l2 else -log(psub) - ( log(proba_sub[(l1, l2)]) if l1 != "" and l2 != "" else 0)
+            ins_c = - log(pins) - ( log(proba_ins[st1[i-1]]) if i > 0 and proba_ins[st1[i-1]] != 0 else 0)
+            sub_c = 0 if l1 == l2 else -log(psub) - ( log(proba_sub[(l1, l2)]) if l1 != "" and l2 != "" and proba_sub[(l1,l2)] != 0 else 0)
             d[i+1][j+1] = min(d[i][j+1] + del_c, d[i+1][j] + ins_c, d[i][j] + sub_c)
 
 
@@ -210,10 +222,10 @@ def levenshtein_btw_files(lex, test):
     """
     t = parseModeleDiscret()
     l =""
-    f = open("yolooooo", "w")
+    f = open("yolog", "w")
     parcours = None
-    (psub, pins, pomi, proba_sub, proba_ins) = t
-    #print ([v for k,v in test])
+    #(psub, pins, pomi, proba_sub, proba_ins) = t
+
     for k,v in test:
         mini = 99999
         nom = k
@@ -230,27 +242,38 @@ def levenshtein_btw_files(lex, test):
                     nom = kl
                     lit = it
 
-                l += k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + str(d) + " <=> " + parcours.print() + "\n"
-                #print(k + " " + kl + " " +parcours.print())
-                #print(l)
-
-        ns, ni, no, n, ins = parcours.compter()
-        psub = (ns + 1) / (ns + ni + no + 3)
-        for k,v in test:
-            
-        proba_sub, proba_ins
-        t = (psub, pins, pomi, proba_sub, proba_ins)
-
-
-
-    f.write(l)
+                l = k + " " + str(v) + " => " + kl + " " + str(it) + (" Erreur " if d > 0 else " Correct ") + ("%.1f" % d) + " <=> " + parcours.print() + "\n"
+                f.write(l)
+        #ns, ni, no, n, ins = parcours.compter()
+        #psub = (ns + 1) / (ns + ni + no + 3)
+        #pins, pomi, proba_sub, proba_ins
+        #t = (psub, pins, pomi, proba_sub, proba_ins)
     f.close()
+
+def learn() :
+    train = parseTrain("data/train-01000items.train")
+    (psub, pins, pomi, proba_sub, proba_ins) = parseModeleDiscret()
+
+    for passe in range(5):
+        for mot, ref, test in train:
+            t = (psub, pins, pomi, proba_sub, proba_ins)
+            d, parcours = Levenshtein(ref, test, t)
+            ns, ni, no, n, ins = parcours.compter()
+            psub = (ns + 1) / (ns + ni + no + 3)
+            for c in proba_sub.keys():
+                proba_sub[c] = float(n[c]) / sum( [ n[k] + 1 for k in n.keys() if c[0] == k[0] ] ) if c in n.keys() else 0
+            for k in proba_ins.keys():
+                proba_ins[k] = float(ins[k]) / sum([ins[key]+1 for key in ins.keys()]) if k in ins.keys() else 0
+
+    return psub, pins, pomi, proba_sub, proba_ins
 
 
 
 if __name__ == "__main__":
 
-    lex = parseLex("data/lexicon-2syll-0500words.lex")
+    learn()
+
+    lex = parseLex("data/lexicon-2syll-0100words.lex")
     phonemes = parsePhonemes()
     test = parseYolo("data/test-2syll-0100words.test")
     levenshtein_btw_files(lex, test)
