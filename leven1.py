@@ -55,5 +55,7 @@ def levenshtein_btw_files(lex, test):
             l += " Correct "
         l += ("%.1f" % mini) + " <=> " + parcours.print() + "\n"
         f.write(l)
-    f.write("taux d'erreur: " + float(erreurs)/total + "\n")
+    s = "taux d'erreur: " + str(float(erreurs)/total)
+    print(s)
+    f.write(s + "\n")
     f.close()
