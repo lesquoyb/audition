@@ -1,3 +1,8 @@
+
+
+INC_MIN = 0.00001
+
+
 class Parcours:
 
     SUB = 0

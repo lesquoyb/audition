@@ -15,7 +15,6 @@ def Levenshtein(st1, st2, hmm):
         d[i][0] = i
     for i in range(lst2+1):
         d[0][i] = i
-    INC_MIN = 0.000000001
     for i in range(0,len(st1)):
         for j in range(0,len(st2)):
             l1 = st1[i]
