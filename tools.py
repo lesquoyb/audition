@@ -1,6 +1,6 @@
 
 
-INC_MIN = 0.00001
+INC_MIN = 0.001
 
 
 class Parcours:
@@ -100,7 +100,7 @@ def parseModeleDiscret(mod_file="data/modele_discret_initialise.dat"):
         phon = line.split(";")[0]
         data = line.split(";")[1:]
         for j in range (len(data)):
-            proba_sub[(phon, phons[j])] = float(data[j])
+            proba_sub[(phon, phons[j])] = max(float(data[j]), INC_MIN)
 
     f.readline()[-1] #BALEK - Proba insertions...
 
@@ -108,9 +108,9 @@ def parseModeleDiscret(mod_file="data/modele_discret_initialise.dat"):
     data = line.split(";")[1:]
 
     for i in range(len(phons)):
-        proba_ins[(phons[i])] = float(data[i])
+        proba_ins[(phons[i])] = max(float(data[i]), INC_MIN)
 
-    return (float(psub), float(pins), float(pomi), proba_sub, proba_ins)
+    return (max(float(psub), INC_MIN), max(float(pins), INC_MIN), max(float(pomi), INC_MIN), proba_sub, proba_ins)
 
 def writeModeleDiscret(modele, fileName):
     psub, pins, pomi, proba_sub, proba_ins = modele
