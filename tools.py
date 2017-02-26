@@ -39,7 +39,7 @@ class Parcours:
         return r
 
 
-def parseYolo(fileName):
+def parseTest(fileName):
     f = open(fileName)
     assoc = []
     for line in f.readlines():
@@ -193,4 +193,3 @@ def backtrack(st1, st2, d):
         parcours.addTransfo(typ, vals)
 
     return parcours
-
