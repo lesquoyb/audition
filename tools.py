@@ -21,10 +21,10 @@ class Parcours:
         n = {}
         ins = {}
         for op, val in self.transfo:
+            n[val] = n[val] + 1 if val in n.keys() else 1
+            n[(val[1],val[0])] = n[val]
             if op == self.SUB:
                 ns += 1
-                n[val] = n[val] + 1 if val in n.keys() else 1
-                n[(val[1],val[0])] = n[val]
             elif op == self.INS:
                 ni += 1
                 ins[val] = ins[val] + 1 if val in ins.keys() else 1

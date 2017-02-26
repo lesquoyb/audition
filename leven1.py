@@ -45,6 +45,7 @@ def levenshtein_btw_files(lex, test):
                     mini = d
                     nom = kl
                     lit = it
+                    l_p = parcours
 
         l = k + " " + str(v) + " => " + nom + " " + str(lit)
         total += 1
@@ -53,7 +54,7 @@ def levenshtein_btw_files(lex, test):
             erreurs += 1
         else:
             l += " Correct "
-        l += ("%.1f" % mini) + " <=> " + parcours.print() + "\n"
+        l += ("%.1f" % mini) + " <=> " + l_p.print() + "\n"
         f.write(l)
     s = "taux d'erreur: " + str(float(erreurs)/total)
     print(s)

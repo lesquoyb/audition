@@ -46,6 +46,7 @@ def levenshtein_btw_files(lex, test, hmm):
         mini = 99999
         nom = k
         lit = ""
+        found = False
         for kl,vl in lex.items():
             for it in vl:
                 d, parcours = Levenshtein(v ,it, hmm)
@@ -53,6 +54,12 @@ def levenshtein_btw_files(lex, test, hmm):
                     mini = d
                     nom = kl
                     lit = it
+                    l_p = parcours
+                    if d == 0:
+                        found = True
+                        break
+            if found:
+                break
         l = k + " " + str(v) + " => " + nom + " " + str(lit)
         total += 1
         if k != nom:
@@ -60,7 +67,7 @@ def levenshtein_btw_files(lex, test, hmm):
             erreurs += 1
         else:
             l += " Correct "
-        l += ("%.1f" % mini) + " <=> " + parcours.print() + "\n"
+        l += ("%.1f" % mini) + " <=> " + l_p.print() + "\n"
         f.write(l)
     s = "taux d'erreur: " + str(float(erreurs)/total)
     print(s)

@@ -6,6 +6,7 @@ from leven2 import Levenshtein
 def learn(hmm, fileName="data/train-01000items.train") :
     train = parseTrain(fileName)
     parcours_list = []
+
     for mot, ref, test in train:
         parcours_list += [Levenshtein(ref, test, hmm)[1]]
 
