@@ -76,8 +76,8 @@ def parseTrain(fileName):
         assoc += [(mot, ref, test)]
     return assoc
 
-def parseModeleDiscret():
-    f = open("data/modele_discret_initialise.dat")
+def parseModeleDiscret(mod_file="data/modele_discret_initialise.dat"):
+    f = open(mod_file)
 
     f.readline() #BALEK - Psub;Pins;Pomi
     line = f.readline()[:-1]

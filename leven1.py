@@ -1,5 +1,4 @@
 from tools import *
-from math import log
 
 
 def Levenshtein(st1, st2):
@@ -27,10 +26,10 @@ def Levenshtein(st1, st2):
 
 
 def levenshtein_btw_files(lex, test):
-    l =""
     f = open("log", "w")
     parcours = None
-
+    erreurs = 0
+    total = 0
     for k,v in test:
         mini = 99999
         nom = k
@@ -47,6 +46,14 @@ def levenshtein_btw_files(lex, test):
                     nom = kl
                     lit = it
 
-        l = k + " " + str(v) + " => " + nom + " " + str(lit) + (" Erreur " if mini > 0 else " Correct ") + ("%.1f" % mini) + " <=> " + parcours.print() + "\n"
+        l = k + " " + str(v) + " => " + nom + " " + str(lit)
+        total += 1
+        if k != nom:
+            l += " Erreur "
+            erreurs += 1
+        else:
+            l += " Correct "
+        l += ("%.1f" % mini) + " <=> " + parcours.print() + "\n"
         f.write(l)
+    f.write("taux d'erreur: " + float(erreurs)/total + "\n")
     f.close()
