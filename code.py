@@ -8,14 +8,14 @@ import leven3
 
 if __name__ == "__main__":
 
-    lex = parseLex("data/lexicon-3syll-0500words.lex")
+    lex = parseLex("data/lexicon-2syll-0500words.lex")
     phonemes = parsePhonemes()
-    test = parseTest("data/test-3syll-0500words.test")
+    test = parseTest("data/test-2syll-0500words.test")
     hmm = parseModeleDiscret()
     print("hmm:")
     leven2.levenshtein_btw_files(lex, test, hmm)
     print("hmm + apprentissage:")
-    hmm = leven3.learn()
+    hmm = leven3.learn(hmm)
     leven2.levenshtein_btw_files(lex, test, hmm)
 
     print("normal:")
